@@ -4,29 +4,26 @@ service cloud.firestore {
 
     function signedIn() { return request.auth != null; }
 
-    // users/{uid} - user hanya boleh baca data dirinya
-    // TIDAK BOLEH write (biar gak bisa ngubah role jadi tutor / nambah saldo)
     match /users/{uid} {
-      allow read: if signedIn() && request.auth.uid == uid;
-      allow write: if false;
+      allow get: if signedIn() && request.auth.uid == uid;
+      allow list: if false;
+      allow create, update, delete: if false;
     }
 
-    // sessions - tutor owner atau student yang ada di studentIds boleh baca
-    // TIDAK BOLEH write dari client (start/end hanya via Cloud Functions)
     match /sessions/{sessionId} {
-      allow read: if signedIn()
+      allow get: if signedIn()
         && (resource.data.tutorId == request.auth.uid
             || request.auth.uid in resource.data.studentIds);
-      allow write: if false;
+      allow list: if false; // set false unless you design query rules
+      allow create, update, delete: if false;
     }
 
-    // transactions - hanya tutor pemilik transaksi boleh baca
     match /transactions/{txId} {
-      allow read: if signedIn() && resource.data.tutorId == request.auth.uid;
-      allow write: if false;
+      allow get: if signedIn() && resource.data.tutorId == request.auth.uid;
+      allow list: if false;
+      allow create, update, delete: if false;
     }
 
-    // default deny
     match /{document=**} {
       allow read, write: if false;
     }

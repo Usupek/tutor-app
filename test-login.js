@@ -1,27 +1,28 @@
-// test-login.js
-const { initializeApp } = require("firebase/app");
-const { getAuth, signInWithEmailAndPassword } = require("firebase/auth");
+require("dotenv").config();
 
-// Konfigurasi agar connect ke Emulator
+const { initializeApp } = require("firebase/app");
+const { getAuth, signInWithEmailAndPassword, connectAuthEmulator } = require("firebase/auth");
+
 const firebaseConfig = {
-  apiKey: "fake-api-key", // Di emulator, key ini bebas
+  apiKey: "fake-api-key",
   authDomain: "tutor-app.firebaseapp.com",
-  projectId: "tutor-app-70a8a", // Sesuaikan dengan project ID di log kamu
+  projectId: process.env.FIREBASE_PROJECT_ID,
 };
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
-// Arahkan Auth ke Emulator (PENTING)
-const { connectAuthEmulator } = require("firebase/auth");
-connectAuthEmulator(auth, "http://127.0.0.1:9099");
+connectAuthEmulator(auth, process.env.AUTH_EMULATOR_URL);
 
 async function getToken() {
   try {
-    // Login user yang tadi dibuat di UI
-    const userCredential = await signInWithEmailAndPassword(auth, "tes@tes.com", "password");
+    const userCredential = await signInWithEmailAndPassword(
+      auth,
+      process.env.TEST_EMAIL,
+      process.env.TEST_PASSWORD
+    );
     const token = await userCredential.user.getIdToken();
-    
+
     console.log("\n=== COPY TOKEN DI BAWAH INI ===");
     console.log(token);
     console.log("==============================\n");
@@ -33,3 +34,4 @@ async function getToken() {
 }
 
 getToken();
+

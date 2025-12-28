@@ -1,9 +1,10 @@
 {
   "dependencies": {
+    "dotenv": "^17.2.3",
     "firebase": "^12.7.0"
   },
   "scripts": {
-  "dev": "firebase emulators:start --import=./emulator-data --export-on-exit",
-  "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "firebase emulators:start --import=./emulator-data --export-on-exit",
+    "test": "echo \"Error: no test specified\" && exit 1"
   }
 }
